@@ -27,37 +27,38 @@ function Blazon () {
     }
   }, [qrCode, webid]);
 
-  if (session.info.isLoggedIn) {
-    return <image>{ parse(qrCode ?? "") }</image>
-  }
-  return <LoginButton 
-  oidcIssuer='https://login.inrupt.com'
-  redirectUrl="http://localhost:3000">
-  </LoginButton>
+    return <div className='container mx-auto max-w-xl'><image>{ session.info.isLoggedIn ? parse(qrCode ?? "") : undefined }</image></div>
 }
 
 const Home: NextPage = () => {
   return (
     <SessionProvider>
-      <div className={styles.container}>
         <Head>
           <title>Solid Blazon</title>
           <meta name="description" content="Generate your WebID QR code" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-
-        <main className={styles.main}>
-          <h1 className={styles.title}>
+        <header className='grid grid-cols-2 md:grid-cols-6'>
+          <h1 className="md:col-start-2 p-4">
             Solid-Blazon
           </h1>
+          <button className='md:col-end-6 p-4'>
+            <LoginButton 
+            oidcIssuer='https://login.inrupt.com'
+            redirectUrl="http://localhost:3000">
+            </LoginButton>
+          </button>
+
+          
+        </header>
+
+          
           <Blazon />
   {/* 
   https://stackoverflow.com/questions/28226677/save-inline-svg-as-jpeg-png-svg
   https://css-tricks.com/using-svg/
   */}
           
-        </main>
-      </div>
     </SessionProvider>
   )
 }
