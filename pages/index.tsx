@@ -45,7 +45,7 @@ const Home: NextPage = () => {
           <button className='md:col-end-6 p-4'>
             <LoginButton 
             oidcIssuer='https://login.inrupt.com'
-            redirectUrl="http://localhost:3000">
+            redirectUrl="https://solid-blazon.vercel.app">
             </LoginButton>
           </button>
 
