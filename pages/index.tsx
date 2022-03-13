@@ -1,10 +1,14 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
 import QRCode from 'qrcode'
 import { useEffect, useState } from 'react'
 import parse from 'html-react-parser';
-import { SessionProvider, LoginButton, useSession, LogoutButton } from '@inrupt/solid-ui-react'
+import { 
+  SessionProvider,
+  LoginButton,
+  useSession,
+  LogoutButton
+} from '@inrupt/solid-ui-react'
 
 function Blazon () {
   const [qrCode, setQrCode] = useState<string>();
@@ -27,10 +31,44 @@ function Blazon () {
     }
   }, [qrCode, webid]);
 
-    return <div className='container mx-auto max-w-xl'><image>{ session.info.isLoggedIn ? parse(qrCode ?? "") : undefined }</image></div>
+  return <div className='container mx-auto max-w-xl'>
+      <image>
+        { session.info.isLoggedIn ? parse(qrCode ?? "") : undefined }
+      </image>
+    </div>
+}
+
+function LogButton () {
+  const { session } = useSession();
+  const [isLoggedIn, setIsLoggedin] = useState<boolean>(false);
+  const [pageUrl, setPageUrl] = useState<string>();
+  
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      setPageUrl(window.location.href);
+    }
+  })
+
+  session.onLogin(() => {
+    setIsLoggedin(true);
+  });
+
+  session.onLogout(() => {
+    setIsLoggedin(false);
+  });
+
+  if (!isLoggedIn) {
+    return <LoginButton 
+    oidcIssuer='https://login.inrupt.com'
+    redirectUrl={pageUrl ?? "http://localhost:4000"}>
+    </LoginButton>
+  }
+  return <LogoutButton></LogoutButton>
+
 }
 
 const Home: NextPage = () => {
+  
   return (
     <SessionProvider>
         <Head>
@@ -43,22 +81,10 @@ const Home: NextPage = () => {
             Solid-Blazon
           </h1>
           <button className='md:col-end-6 p-4'>
-            <LoginButton 
-            oidcIssuer='https://login.inrupt.com'
-            redirectUrl="https://solid-blazon.vercel.app">
-            </LoginButton>
+            <LogButton />
           </button>
-
-          
         </header>
-
-          
-          <Blazon />
-  {/* 
-  https://stackoverflow.com/questions/28226677/save-inline-svg-as-jpeg-png-svg
-  https://css-tricks.com/using-svg/
-  */}
-          
+        <Blazon />
     </SessionProvider>
   )
 }
