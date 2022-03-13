@@ -10,37 +10,32 @@ import {
   LogoutButton
 } from '@inrupt/solid-ui-react'
 
-function Blazon () {
+function Blazon (props: {webid: string | undefined}) {
   const [qrCode, setQrCode] = useState<string>();
-  const [webid, setWebid] = useState<string>();
-  const { session } = useSession();
-
-  session.onLogin(() => {
-    setWebid(session.info.webId);
-  });
 
   useEffect(() => {
-    if (webid !== undefined) {
+    if (props.webid !== undefined) {
       (async () => {
         try {
-          setQrCode(await QRCode.toString(webid, {type: "svg"}))
+          setQrCode(await QRCode.toString(props.webid as string, {type: "svg"}))
         } catch (err) {
           console.error(err)
         }
       })()
+    } else {
+      setQrCode(undefined);
     }
-  }, [qrCode, webid]);
+  }, [qrCode, props.webid]);
 
   return <div className='container mx-auto max-w-xl'>
       <image>
-        { session.info.isLoggedIn ? parse(qrCode ?? "") : undefined }
+        { qrCode ? parse(qrCode) : undefined }
       </image>
     </div>
 }
 
-function LogButton () {
-  const { session } = useSession();
-  const [isLoggedIn, setIsLoggedin] = useState<boolean>(false);
+function LogButton (props: {isLoggedIn: boolean}) {
+
   const [pageUrl, setPageUrl] = useState<string>();
   
   useEffect(() => {
@@ -49,15 +44,7 @@ function LogButton () {
     }
   })
 
-  session.onLogin(() => {
-    setIsLoggedin(true);
-  });
-
-  session.onLogout(() => {
-    setIsLoggedin(false);
-  });
-
-  if (!isLoggedIn) {
+  if (!props.isLoggedIn) {
     return <LoginButton 
     oidcIssuer='https://login.inrupt.com'
     redirectUrl={pageUrl ?? "http://localhost:4000"}>
@@ -68,6 +55,19 @@ function LogButton () {
 }
 
 const Home: NextPage = () => {
+  const { session } = useSession();
+  const [isLoggedIn, setIsLoggedin] = useState<boolean>(false);
+  const [webid, setWebid] = useState<string>();
+
+  session.onLogin(() => {
+    setIsLoggedin(true);
+    setWebid(session.info.webId);
+  });
+
+  session.onLogout(() => {
+    setIsLoggedin(false);
+    setWebid(undefined);
+  });
   
   return (
     <SessionProvider>
@@ -81,10 +81,10 @@ const Home: NextPage = () => {
             Solid-Blazon
           </h1>
           <button className='md:col-end-6 p-4'>
-            <LogButton />
+            <LogButton {...{isLoggedIn}} />
           </button>
         </header>
-        <Blazon />
+        <Blazon {...{webid}}/>
     </SessionProvider>
   )
 }
