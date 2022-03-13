@@ -1,0 +1,13 @@
+{
+  "@context": "https://www.w3.org/ns/solid/oidc-context.jsonld",
+
+  "client_id": "https://solid-blazon.vercel.app/api/id",
+  "client_name": "Solid-Blazon",
+  "redirect_uris": ["https://solid-blazon.vercel.app/"],
+  "client_uri": "https://solid-blazon.vercel.app",
+  "scope" : "openid offline_access webid",
+  "grant_types" : ["refresh_token","authorization_code"],
+  "response_types" : ["code"],
+  "default_max_age" : 3600,
+  "require_auth_time" : true
+}

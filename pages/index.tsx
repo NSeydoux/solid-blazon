@@ -9,6 +9,7 @@ import {
   useSession,
   LogoutButton
 } from '@inrupt/solid-ui-react'
+import clientIdDocument from "./api/clientId.json";
 
 function Blazon (props: {webid: string | undefined}) {
   const [qrCode, setQrCode] = useState<string>();
@@ -37,17 +38,24 @@ function Blazon (props: {webid: string | undefined}) {
 function LogButton (props: {isLoggedIn: boolean}) {
 
   const [pageUrl, setPageUrl] = useState<string>();
-  
+  const [clientId, setClientId] = useState<string>();
+  // const authOptions = {
+  //   clientId: clientId.client_id
+  // }
   useEffect(() => {
     if (typeof window !== undefined) {
       setPageUrl(window.location.href);
+      if (!window.location.href.includes("localhost")){
+        setClientId(clientIdDocument.client_id);
+      }
     }
   })
 
   if (!props.isLoggedIn) {
     return <LoginButton 
     oidcIssuer='https://login.inrupt.com'
-    redirectUrl={pageUrl ?? "http://localhost:4000"}>
+    redirectUrl={pageUrl ?? "http://localhost:4000"}
+    authOptions={{clientId, clientName: clientIdDocument.client_name}}>
     </LoginButton>
   }
   return <LogoutButton></LogoutButton>
