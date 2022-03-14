@@ -28,20 +28,22 @@ function Blazon (props: {webid: string | undefined}) {
     }
   }, [qrCode, props.webid]);
 
-  return <div className='container mx-auto max-w-xl'>
+  return <div className='mx-auto'>
+    <p className='text-center hover:underline'><a href={props.webid}>{props.webid}</a></p>
+    <div className='container mx-auto max-w-xl'>
       <image>
         { qrCode ? parse(qrCode) : undefined }
       </image>
     </div>
+  </div>
+
 }
 
 function LogButton (props: {isLoggedIn: boolean}) {
 
   const [pageUrl, setPageUrl] = useState<string>();
   const [clientId, setClientId] = useState<string>();
-  // const authOptions = {
-  //   clientId: clientId.client_id
-  // }
+
   useEffect(() => {
     if (typeof window !== undefined) {
       setPageUrl(window.location.href);
@@ -82,15 +84,14 @@ const Home: NextPage = () => {
         <Head>
           <title>Solid Blazon</title>
           <meta name="description" content="Generate your WebID QR code" />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/solid-blazon-ico.svg" />
         </Head>
-        <header className='grid grid-cols-2 md:grid-cols-6'>
-          <h1 className="md:col-start-2 p-4">
-            Solid-Blazon
-          </h1>
-          <button className='md:col-end-6 p-4'>
-            <LogButton {...{isLoggedIn}} />
-          </button>
+        <header className='flex flex-row items-center'>
+          <img className='w-0 xs:w-20 invisible xs:visible m-1 ' src="/solid-blazon.svg" alt="Solid-Blazon logo"></img>
+          <h1 className='w-0 xs:w-auto invisible xs:visible xs:mx-auto font-bold text-lg'>Solid-Blazon</h1>
+          <button className='mx-auto xs:mx-1 w-20 border-2 rounded-md border-black'>
+              <LogButton {...{isLoggedIn}} />
+            </button>
         </header>
         <Blazon {...{webid}}/>
     </SessionProvider>
