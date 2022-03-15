@@ -18,7 +18,9 @@ function Blazon (props: {webid: string | undefined}) {
     if (props.webid !== undefined) {
       (async () => {
         try {
-          setQrCode(await QRCode.toString(props.webid as string, {type: "svg"}))
+          const url = new URL("/api/qr", window.location.href);
+          url.searchParams.set("webid", encodeURI(props.webid as string));
+          setQrCode(await fetch(url.href).then(res => res.text()));
         } catch (err) {
           console.error(err)
         }
