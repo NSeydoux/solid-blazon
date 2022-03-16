@@ -20,7 +20,10 @@ function Blazon (props: {webid: string | undefined}) {
         try {
           const url = new URL("/api/qr", window.location.href);
           url.searchParams.set("webid", encodeURI(props.webid as string));
-          setQrCode(await fetch(url.href).then(res => res.text()));
+          const qrCodeSvg = await fetch(url.href).then(res => res.text())
+          // Setting the QRCode as a data URL enables saving it from the browser
+          // as an image (as opposed to a regular HTML element).
+          setQrCode(`data:image/svg+xml,${encodeURIComponent(qrCodeSvg)}`);
         } catch (err) {
           console.error(err)
         }
@@ -33,9 +36,7 @@ function Blazon (props: {webid: string | undefined}) {
   return <div className='mx-auto'>
     <p className='text-center hover:underline'><a href={props.webid}>{props.webid}</a></p>
     <div className='container mx-auto max-w-xl'>
-      <image>
-        { qrCode ? parse(qrCode) : undefined }
-      </image>
+      <img src={qrCode}/>
     </div>
   </div>
 
