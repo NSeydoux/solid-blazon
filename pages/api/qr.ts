@@ -1,10 +1,31 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import QRCode from 'qrcode'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import QRCode from 'qrcode';
+import Cors from 'cors';
+
+// Initializing the cors middleware
+const cors = Cors({
+  methods: ['GET'],
+});
+
+// Helper method to wait for a middleware to execute before continuing
+// And to throw an error when an error happens in a middleware
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: typeof cors) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  })
+}
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // Run the CORS middleware
+  await runMiddleware(req, res, cors)
   if (req.method?.toLowerCase() === "get") {
     if (req.query["webid"] === undefined) {
       return res.status(400).json({

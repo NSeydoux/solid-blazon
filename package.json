@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@inrupt/solid-ui-react": "^2.7.0",
+    "cors": "^2.8.5",
     "html-react-parser": "^1.4.8",
     "next": "12.1.0",
     "qrcode": "^1.5.0",
@@ -17,6 +18,7 @@
     "react-dom": "17.0.2"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.12",
     "@types/node": "17.0.21",
     "@types/qrcode": "^1.4.2",
     "@types/react": "17.0.39",
